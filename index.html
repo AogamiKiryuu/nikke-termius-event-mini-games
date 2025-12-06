@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIKKE Puzzle Solver</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <h2>📥 Input Grid</h2>
+            
+            <div class="input-tabs">
+                <button class="tab-btn active" data-tab="manual">Manual Input</button>
+                <button class="tab-btn" data-tab="upload">Upload Gambar (OCR)</button>
+            </div>
+            
+            <div class="tab-content active" id="manual-tab">
+                <div class="grid-controls">
+                    <div class="control-row">
+                        <label>Baris:</label>
+                        <input type="number" id="rows" value="14" min="4" max="20">
+                        <label>Kolom:</label>
+                        <input type="number" id="cols" value="8" min="4" max="14">
+                    </div>
+                    <button id="createGrid" class="btn btn-primary">Buat Grid</button>
+                </div>
+                
+                <p class="hint">Ketik angka 1-9, gunakan arrow keys untuk navigasi</p>
+                
+                <div class="input-grid-container">
+                    <div id="inputGrid" class="input-grid"></div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="upload-tab">
+                <div class="paste-area">
+                    <h4>📋 Paste/Ketik Angka Grid:</h4>
+                    <textarea id="gridText" placeholder="Contoh:
+7 5 2 3 7 6 6 3
+4 7 3 8 6 5 5 6
+3 9 8 1 5 3 5 8
+...
+
+Atau tanpa spasi:
+75237663
+47386556
+..."></textarea>
+                    <button id="parseText" class="btn btn-info">📥 Parse ke Grid</button>
+                </div>
+                
+                <div class="divider">atau</div>
+                
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="imageInput" accept="image/*" hidden>
+                    <div class="upload-placeholder" id="uploadPlaceholder">
+                        <span class="upload-icon">📷</span>
+                        <p>Upload gambar untuk OCR</p>
+                        <p class="small">(Akurasi mungkin bervariasi)</p>
+                    </div>
+                    <img id="previewImage" class="preview-image" hidden>
+                </div>
+                
+                <div class="ocr-controls">
+                    <div class="control-row">
+                        <label>Baris:</label>
+                        <input type="number" id="ocrRows" value="14" min="4" max="20">
+                        <label>Kolom:</label>
+                        <input type="number" id="ocrCols" value="8" min="4" max="14">
+                    </div>
+                </div>
+                
+                <div class="ocr-status" id="ocrStatus"></div>
+                
+                <button id="processOCR" class="btn btn-primary" disabled>🔍 Proses OCR</button>
+            </div>
+            
+            <button id="solveBtn" class="btn btn-success btn-large">🚀 Solve Puzzle!</button>
+        </div>
+        
+        <!-- Solution Section -->
+        <div class="solution-section">
+            <div class="solution-header">
+                <h2>● Solution Steps</h2>
+                <div id="solutionSummary" class="solution-summary"></div>
+            </div>
+            
+            <!-- Step Navigation Tabs -->
+            <div class="step-tabs-container">
+                <div class="step-tabs" id="stepTabs"></div>
+            </div>
+            
+            <!-- Current Step Detail -->
+            <div class="step-detail" id="stepDetail">
+                <p class="no-solution">Masukkan grid dan klik "Solve Puzzle!" untuk melihat solusi</p>
+            </div>
+            
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <button id="prevStep" class="btn btn-nav" disabled>← Previous</button>
+                <button id="nextStep" class="btn btn-nav" disabled>Next →</button>
+                <span class="nav-hint">Use ← → arrow keys</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="solver.js"></script>
+</body>
+</html>
