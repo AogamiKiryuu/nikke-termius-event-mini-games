@@ -28,10 +28,34 @@
                     <button id="createGrid" class="btn btn-primary">Buat Grid</button>
                 </div>
                 
-                <p class="hint">Ketik angka 1-9, gunakan arrow keys untuk navigasi</p>
+                <p class="hint">Tap cell lalu ketik angka, atau gunakan numpad di bawah</p>
                 
                 <div class="input-grid-container">
                     <div id="inputGrid" class="input-grid"></div>
+                </div>
+                
+                <!-- Mobile Numpad -->
+                <div class="mobile-numpad" id="mobileNumpad">
+                    <div class="numpad-row">
+                        <button class="numpad-btn" data-num="1">1</button>
+                        <button class="numpad-btn" data-num="2">2</button>
+                        <button class="numpad-btn" data-num="3">3</button>
+                    </div>
+                    <div class="numpad-row">
+                        <button class="numpad-btn" data-num="4">4</button>
+                        <button class="numpad-btn" data-num="5">5</button>
+                        <button class="numpad-btn" data-num="6">6</button>
+                    </div>
+                    <div class="numpad-row">
+                        <button class="numpad-btn" data-num="7">7</button>
+                        <button class="numpad-btn" data-num="8">8</button>
+                        <button class="numpad-btn" data-num="9">9</button>
+                    </div>
+                    <div class="numpad-row">
+                        <button class="numpad-btn numpad-clear" data-num="clear">⌫</button>
+                        <button class="numpad-btn" data-num="0">0</button>
+                        <button class="numpad-btn numpad-next" data-num="next">→</button>
+                    </div>
                 </div>
             </div>
             

@@ -31,11 +31,61 @@ class NikkeSolver {
             if (e.key === 'ArrowRight') this.goToStep(this.currentStep + 1);
         });
         
+        // Mobile Numpad
+        this.setupNumpad();
+        
         // OCR Upload
         this.setupOCR();
         
         // Initialize grid
         this.createInputGrid();
+    }
+    
+    setupNumpad() {
+        const numpad = document.getElementById('mobileNumpad');
+        if (!numpad) return;
+        
+        numpad.querySelectorAll('.numpad-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const num = btn.dataset.num;
+                const focusedCell = document.querySelector('.input-cell:focus');
+                
+                if (num === 'clear') {
+                    // Delete/backspace
+                    if (focusedCell) {
+                        const row = parseInt(focusedCell.dataset.row);
+                        const col = parseInt(focusedCell.dataset.col);
+                        focusedCell.value = '';
+                        this.grid[row][col] = 1;
+                        focusedCell.classList.remove('has-value');
+                    }
+                } else if (num === 'next') {
+                    // Move to next cell
+                    if (focusedCell) {
+                        const row = parseInt(focusedCell.dataset.row);
+                        const col = parseInt(focusedCell.dataset.col);
+                        this.moveToNextCell(row, col);
+                    }
+                } else {
+                    // Number input
+                    if (focusedCell) {
+                        const row = parseInt(focusedCell.dataset.row);
+                        const col = parseInt(focusedCell.dataset.col);
+                        const val = parseInt(num);
+                        if (val >= 1 && val <= 9) {
+                            focusedCell.value = num;
+                            this.grid[row][col] = val;
+                            focusedCell.classList.add('has-value');
+                            this.moveToNextCell(row, col);
+                        }
+                    } else {
+                        // No cell focused, focus first cell
+                        this.focusCell(0, 0);
+                    }
+                }
+            });
+        });
     }
     
     switchTab(tabName) {
@@ -68,7 +118,7 @@ class NikkeSolver {
     renderInputGrid() {
         const container = document.getElementById('inputGrid');
         container.innerHTML = '';
-        container.style.gridTemplateColumns = `repeat(${this.cols}, 32px)`;
+        container.style.gridTemplateColumns = `repeat(${this.cols}, 38px)`;
         
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
