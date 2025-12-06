@@ -451,11 +451,35 @@ class NikkeSolver {
         const rows = grid.length;
         const cols = grid[0].length;
         
-        // Find all valid combinations
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-                if (grid[i][j] > 0) {
-                    this.findCombinations(grid, i, j, 10, [], new Set(), solutions);
+        // Find all valid rectangular combinations (like mobile drag selection)
+        // This includes: single cells, horizontal lines, vertical lines, and rectangles
+        
+        for (let startRow = 0; startRow < rows; startRow++) {
+            for (let startCol = 0; startCol < cols; startCol++) {
+                // Try all possible rectangle sizes from this starting point
+                for (let endRow = startRow; endRow < rows; endRow++) {
+                    for (let endCol = startCol; endCol < cols; endCol++) {
+                        const cells = [];
+                        let sum = 0;
+                        let valid = true;
+                        
+                        // Collect all cells in this rectangle
+                        for (let r = startRow; r <= endRow && valid; r++) {
+                            for (let c = startCol; c <= endCol && valid; c++) {
+                                if (grid[r][c] > 0) {
+                                    cells.push({ row: r, col: c, value: grid[r][c] });
+                                    sum += grid[r][c];
+                                } else {
+                                    // Empty cell in selection - still valid, just skip it
+                                }
+                            }
+                        }
+                        
+                        // Check if sum equals 10 and has at least 1 cell
+                        if (sum === 10 && cells.length > 0) {
+                            solutions.push(cells);
+                        }
+                    }
                 }
             }
         }
@@ -475,44 +499,6 @@ class NikkeSolver {
             type: this.getSolutionType(best),
             sum: best.reduce((acc, c) => acc + c.value, 0)
         };
-    }
-    
-    findCombinations(grid, row, col, target, path, visited, results, maxDepth = 10) {
-        const key = `${row},${col}`;
-        if (visited.has(key)) return;
-        if (path.length >= maxDepth) return; // Limit depth to avoid too long combinations
-        
-        const value = grid[row][col];
-        if (value <= 0) return;
-        
-        const newPath = [...path, { row, col, value }];
-        const newVisited = new Set(visited);
-        newVisited.add(key);
-        
-        if (value === target) {
-            // Found a valid combination!
-            results.push(newPath);
-            return;
-        }
-        
-        if (value > target) return;
-        
-        // Try all 8 neighbors (adjacent cells including diagonals)
-        const directions = [
-            [-1, -1], [-1, 0], [-1, 1],
-            [0, -1],          [0, 1],
-            [1, -1], [1, 0], [1, 1]
-        ];
-        
-        for (const [dr, dc] of directions) {
-            const nr = row + dr;
-            const nc = col + dc;
-            if (nr >= 0 && nr < grid.length && nc >= 0 && nc < grid[0].length) {
-                if (grid[nr][nc] > 0 && !newVisited.has(`${nr},${nc}`)) {
-                    this.findCombinations(grid, nr, nc, target - value, newPath, newVisited, results, maxDepth);
-                }
-            }
-        }
     }
     
     removeDuplicateSolutions(solutions) {
@@ -535,35 +521,8 @@ class NikkeSolver {
         if (rows.size === 1) return 'horizontal';
         if (cols.size === 1) return 'vertical';
         
-        // Check if cells form a rectangle pattern
-        if (cells.length >= 4) {
-            const minRow = Math.min(...cells.map(c => c.row));
-            const maxRow = Math.max(...cells.map(c => c.row));
-            const minCol = Math.min(...cells.map(c => c.col));
-            const maxCol = Math.max(...cells.map(c => c.col));
-            
-            // Check if all cells form a filled rectangle
-            const expectedSize = (maxRow - minRow + 1) * (maxCol - minCol + 1);
-            if (expectedSize === cells.length) {
-                return 'rectangle';
-            }
-        }
-        
-        // Check if cells form a diagonal pattern
-        if (cells.length <= 4) {
-            const sortedByRow = [...cells].sort((a, b) => a.row - b.row);
-            const isDiagonal = sortedByRow.every((c, i) => {
-                if (i === 0) return true;
-                const prev = sortedByRow[i - 1];
-                return Math.abs(c.row - prev.row) <= 1 && Math.abs(c.col - prev.col) <= 1;
-            });
-            if (isDiagonal && rows.size === cells.length) return 'diagonal';
-        }
-        
-        // Check L-shape or other patterns
-        if (cells.length === 3) return 'l-shape';
-        
-        return `cells-${cells.length}`;
+        // It's a rectangle (multiple rows and columns)
+        return 'rectangle';
     }
     
     getSolutionTypeLabel(cells) {
